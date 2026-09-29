@@ -127,6 +127,7 @@ code {
   border: 1px solid black;
   padding: 8px;
 }
-.action-button {
-  margin-right: 10px;
+.action-cell {
+  border: 1px solid #ccc;
+  padding: 8px;
 }

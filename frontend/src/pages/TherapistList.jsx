@@ -13,9 +13,25 @@ function TherapistList() {
 
     // GET
     useEffect(() => {
-        fetch("http://localhost:8080/api/therapists")
-            .then((response) => response.json())
+        const token = localStorage.getItem("token");
+
+        fetch("http://localhost:8080/api/therapists", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        })
+            .then((response) => {
+                console.log("STATUS =", response.status);
+
+                if (!response.ok) {
+                    throw new Error("Failed to load therapists");
+                }
+
+                return response.json();
+            })
             .then((data) => {
+                console.log("THERAPIST DATA =", data);
                 setTherapists(data);
             })
             .catch((error) => {
@@ -182,27 +198,26 @@ function TherapistList() {
                         <td className="therapist-cell">{therapist.name}</td>
                         <td className="therapist-cell">{therapist.specialization}</td>
                         <td className="therapist-cell">{therapist.sessionType}</td>
-                        <td className="therapist-cell">
-                            <td className="therapist-cell">
-                                <button
-                                    type="button"
-                                    className="action-button"
-                                    onClick={() => handleEdit(therapist)}
-                                >
-                                    Edit
-                                </button>
 
-                                <button
-                                    type="button"
-                                    className="action-button"
-                                    onClick={() => handleDelete(therapist.id)}
-                                >
-                                    Delete
-                                </button>
-                            </td>
+                        <td className="therapist-cell action-cell">
+                            <button
+                                type="button"
+                                className="action-button"
+                                onClick={() => handleEdit(therapist)}
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                type="button"
+                                className="action-button"
+                                onClick={() => handleDelete(therapist.id)}
+                                style={{ marginLeft: "10px" }}
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
-
                 ))}
                 </tbody>
             </table>

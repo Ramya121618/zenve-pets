@@ -3,15 +3,23 @@ package com.zenve.pets.service;
 import com.zenve.pets.entity.Therapist;
 import com.zenve.pets.repository.TherapistRepository;
 import org.springframework.stereotype.Service;
-
+import com.zenve.pets.entity.Session;
+import com.zenve.pets.repository.SessionRepository;
 import java.util.List;
+
+
 import java.util.Optional;
 @Service
 public class TherapistService {
     private final TherapistRepository therapistRepository;
+    private final SessionRepository sessionRepository;
 
-    public TherapistService(TherapistRepository therapistRepository) {
+    public TherapistService(TherapistRepository therapistRepository,SessionRepository sessionRepository) {
         this.therapistRepository = therapistRepository;
+        this.sessionRepository = sessionRepository;
+    }
+    public List<Session> getSessionsByTherapist(Long therapistId) {
+        return sessionRepository.findByTherapistId(therapistId);
     }
 
     public Therapist createTherapist(Therapist therapist) {

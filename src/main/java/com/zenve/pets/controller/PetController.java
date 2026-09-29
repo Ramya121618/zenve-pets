@@ -18,10 +18,18 @@ public class PetController {
     }
 
     // Create a new pet
+
     @PostMapping
     public Pet createPet(@Valid @RequestBody Pet pet) {
+
+        System.out.println("PET RECEIVED: " + pet.getName());
+        System.out.println("PET BREED: " + pet.getBreed());
+        System.out.println("PET AGE: " + pet.getAge());
+        System.out.println("PET OWNER: " + pet.getOwner());
+
         return petService.createPet(pet);
     }
+
 
     // Get all pets
     @GetMapping

@@ -14,15 +14,32 @@ function App() {
 
 
     const loadPets = () => {
-        fetch("http://localhost:8080/api/pets")
+
+        const token = localStorage.getItem("token");
+
+
+
+        fetch("http://localhost:8080/api/pets", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch pets");
-                }
-                return response.json();
+                console.log("STATUS:", response.status);
+
+                return response.text();
             })
             .then(data => {
-                setPets(data);
+                console.log("RESPONSE LENGTH:", data.length);
+                console.log("LAST 100 CHARACTERS:", data.slice(-100));
+
+                if (!data) {
+                    throw new Error("Server returned an empty response");
+                }
+
+                const pets = JSON.parse(data);
+
+                setPets(pets);
                 setLoading(false);
             })
             .catch(error => {
@@ -31,35 +48,45 @@ function App() {
                 setLoading(false);
             });
     };
+
+
       useEffect(() => {
           loadPets();
       }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+            const token = localStorage.getItem("token");
+
             const response = await fetch(
                 editId
                     ? `http://localhost:8080/api/pets/${editId}`
                     : "http://localhost:8080/api/pets",
                 {
                     method: editId ? "PUT" : "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    breed: breed,
-                    age: age,
-                    owner: owner
-                })
-            });
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        breed: breed,
+                        age: age,
+                        owner: {
+                            id: Number(owner)
+                        }
+                    })
+                }
+            );
+            console.log("POST STATUS:", response.status);
 
+            const responseText = await response.text();
+
+            console.log("POST RESPONSE:", responseText);
             if (!response.ok) {
-                throw new Error("Failed to add pet");
+                throw new Error("Failed to save pet");
             }
-
 
             if (editId) {
                 alert("Pet updated successfully!");
@@ -73,13 +100,11 @@ function App() {
             setOwner("");
             setEditId(null);
 
-
             loadPets();
-
 
         } catch (error) {
             console.error(error);
-            alert("Failed to add pet");
+            alert("Failed to save pet");
         }
     };
     const handleEdit = (pet) => {
@@ -99,10 +124,15 @@ function App() {
         }
 
         try {
+            const token = localStorage.getItem("token");
+
             const response = await fetch(
                 `http://localhost:8080/api/pets/${id}`,
                 {
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
                 }
             );
 
@@ -159,9 +189,9 @@ function App() {
                     </label>
                     <br />
                 <label>
-                    Owner:
+                    Owner ID:
                     <input
-                        type="text"
+                        type="number"
                         value={owner}
                         onChange={(e) => setOwner(e.target.value)}
                     />
@@ -184,7 +214,8 @@ function App() {
                     <th>Name</th>
                     <th>Breed</th>
                     <th>Age</th>
-                    <th>Owner</th>
+                    <th>Owner ID</th>
+                    <th>Owner Name</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -196,7 +227,8 @@ function App() {
                         <td>{pet.name}</td>
                         <td>{pet.breed}</td>
                         <td>{pet.age}</td>
-                        <td>{pet.owner}</td>
+                        <td>{pet.owner?.id}</td>
+                        <td>{pet.owner?.name}</td>
                         <td>
                             <button
                                 type="button"

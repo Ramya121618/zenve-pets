@@ -1,12 +1,10 @@
 package com.zenve.pets.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "pets")
@@ -20,7 +18,12 @@ public class Pet {
     @NotNull(message = "Age cannot be empty")
     private Integer age;
     private String breed;
-    private String owner;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+
+
 
      public Pet(){
      }
@@ -57,11 +60,11 @@ public class Pet {
         this.breed = breed;
     }
 
-    public String getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 }

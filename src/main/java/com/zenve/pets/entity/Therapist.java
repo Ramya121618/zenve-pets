@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 @Table(name = "therapists")
@@ -19,6 +21,8 @@ public class Therapist {
     @NotBlank(message = "Specialization cannot be empty")
     private String specialization;
     private String sessionType;
+    @OneToMany(mappedBy = "therapist")
+    private List<Session> sessions;
 
     public Therapist(){
     }
@@ -52,5 +56,13 @@ public class Therapist {
 
     public void setSessionType(String sessionType) {
         this.sessionType = sessionType;
+    }
+
+    public List<Session> getSessions() {
+        return sessions;
+    }
+
+    public void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
     }
 }

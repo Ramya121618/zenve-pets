@@ -5,8 +5,10 @@ import com.zenve.pets.service.TherapistService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import java.util.List;
+import com.zenve.pets.entity.Session;
+
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/therapists")
@@ -16,6 +18,11 @@ public class TherapistController {
 
     public TherapistController(TherapistService therapistService) {
         this.therapistService = therapistService;
+
+    }
+    @GetMapping("/{therapistId}/sessions")
+    public List<Session> getSessionsByTherapist(@PathVariable Long therapistId) {
+        return therapistService.getSessionsByTherapist(therapistId);
     }
 
     @PostMapping
